@@ -28,6 +28,8 @@ int main()
 
     int clients_fds[MAX_CLIENTS] = {0};
 
+    char *ack_message = "The server received your message";
+
     // timeout for the select
     struct timeval timeout;
     timeout.tv_sec = 5;
@@ -128,13 +130,18 @@ int main()
                 }
                 else
                 {
-                    buffer[bytes_received] = '\0';  // null terminate the string
+                    buffer[bytes_received - 1] = '\0';  // null terminate the string
                     printf("[CLIENT %d]: %s\n", clients_fds[i], buffer);
+
+                    send(clients_fds[i], ack_message, strlen(ack_message), 0);
+                    printf("Message sent to CLIENT %d\n", clients_fds[i]);
                 }
             }
         }
     
     }
+
+    close(server_fd);
 
     return 0;
 }
